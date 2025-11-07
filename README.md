@@ -196,3 +196,71 @@ const response = await fetch("http://localhost:9000/", {
       query: "query {greeting}",
     }),
   });
+
+
+
+
+
+  
+
+Code first approach/ schema first approach
+
+
+
+Install nexus
+
+npm install nexus
+
+In Code first approach we do not need type definition and resolver instead we use a function provided by Nexus. (we created a 'server-code-first.js' file). We import 'queryType' and call 'queryType', we pass an object with the definition (definition is a function that defines which fields are available). This function receives an argument 't' that provides various methods. We can use 'field' method to define the field or we can use the predefined types like string. to replicate 'Helloworld' program we need a string field called 'greeting', we simply pass 'greeting' as an argument. And second argument we pass 'resolve' function.
+
+import { makeSchema, queryType } from "nexus";
+
+const Query = queryType({
+  definition: (t) => {
+    t.string("greeting", {
+      resolve: () => "Hello World!!",
+    });
+  },
+});
+
+Here query Type definition is ready.
+
+
+
+Schema definition language advantages is it provides a cleaner syntax, easier to read the schema
+
+
+Next we want to create schema object, by importing another function called makeSchema. 'makeSchema' argument we pass contains an object (an array of types, here we need 'Query'). In ApolloServer we pass schema property.
+
+
+const schema = makeSchema({ types: [Query] });
+
+
+server-code-first.js
+
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import { makeSchema, queryType } from "nexus";
+
+const Query = queryType({
+  definition: (t) => {
+    t.string("greeting", {
+      resolve: () => "Hello World!!",
+    });
+  },
+});
+
+const schema = makeSchema({ types: [Query] });
+
+const server = new ApolloServer({ schema });
+
+const { url } = await startStandaloneServer(server, { listen: { port: 9000 } });
+
+
+
+
+
+run in terminal 
+
+node server-code-first.js
+
